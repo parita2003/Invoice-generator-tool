@@ -74,6 +74,36 @@
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- HTML Parser to clean/fix HTML into XML -->
+    <dependency>
+        <groupId>org.jsoup</groupId>
+        <artifactId>jsoup</artifactId>
+        <version>1.15.3</version>
+    </dependency>
+    <!-- Open HTML to PDF PDFBox Renderer -->
+    <dependency>
+        <groupId>com.openhtmltopdf</groupId>
+        <artifactId>openhtmltopdf-pdfbox</artifactId>
+        <version>1.0.10</version>
+    </dependency>
+	 <!-- Google Drive API -->
+    <dependency>
+        <groupId>com.google.apis</groupId>
+        <artifactId>google-api-services-drive</artifactId>
+        <version>v3-rev20240123-2.0.0</version> <!-- Use the latest stable v3 version -->
+    </dependency>
+    <!-- OAuth client library for authentication -->
+    <dependency>
+        <groupId>com.google.auth</groupId>
+        <artifactId>google-auth-library-oauth2-http</artifactId>
+        <version>1.23.0</version>
+    </dependency>
+	<!-- for s3 upload -->
+	<dependency>
+        <groupId>software.amazon.awssdk</groupId>
+        <artifactId>s3</artifactId>
+        <version>2.25.0</version> <!-- Use latest stable v2 version -->
+    </dependency>
 	</dependencies>
 
 	<build>
