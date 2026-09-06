@@ -108,11 +108,15 @@ public class NotificationServiceImpl implements NotificationService {
       GenerateInvoiceWebhookResponse response = new GenerateInvoiceWebhookResponse();  
        String html = "<html><body><h1>Hello World</h1><p>This PDF was generated from HTML for free!</p></body></html>";
         try {
-            convertHtmlToPdf(html, "output.pdf");
+        //     convertHtmlToPdf(html, "output.pdf");
+            String pdfUrl = convertHtmlAndUploadToS3(html, "output.pdf");
+            response.setPdfUrl(pdfUrl);
             System.out.println("PDF generated successfully.");
+            return response;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
       return response;
     }
 
@@ -136,7 +140,7 @@ public class NotificationServiceImpl implements NotificationService {
 
 //     public class PdfS3Service {
 
-//     // Replace these values with your actual configuration
+    // Replace these values with your actual configuration
 //     private static final String BUCKET_NAME = "my-pdf-bucket";
 //     private static final String ACCESS_KEY = "YOUR_AWS_ACCESS_KEY";
 //     private static final String SECRET_KEY = "YOUR_AWS_SECRET_KEY";
@@ -146,41 +150,42 @@ public class NotificationServiceImpl implements NotificationService {
      * Converts HTML to an in-memory PDF and uploads it directly to Amazon S3.
      * Makes the file publicly readable and returns the absolute public URL.
      */
-//     public static String convertHtmlAndUploadToS3(String htmlContent, String s3FileName) throws Exception {
-//         // Step 1: Generate PDF completely in-memory (using Jsoup + Open HTML to PDF)
-//         Document doc = Jsoup.parse(htmlContent);
-//         doc.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
-//         doc.outputSettings().prettyPrint(false);
+    public static String convertHtmlAndUploadToS3(String htmlContent, String s3FileName) throws Exception {
+        // Step 1: Generate PDF completely in-memory (using Jsoup + Open HTML to PDF)
+        Document doc = Jsoup.parse(htmlContent);
+        doc.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
+        doc.outputSettings().prettyPrint(false);
 
-//         ByteArrayOutputStream pdfOutputStream = new ByteArrayOutputStream();
-//         PdfRendererBuilder builder = new PdfRendererBuilder();
-//         builder.useFastMode();
-//         builder.withW3cDocument(new W3CDom().fromJsoup(doc), "/");
-//         builder.toStream(pdfOutputStream);
-//         builder.run();
+        ByteArrayOutputStream pdfOutputStream = new ByteArrayOutputStream();
+        PdfRendererBuilder builder = new PdfRendererBuilder();
+        builder.useFastMode();
+        builder.withW3cDocument(new W3CDom().fromJsoup(doc), "/");
+        builder.toStream(pdfOutputStream);
+        builder.run();
 
-//         byte[] pdfBytes = pdfOutputStream.toByteArray();
+        byte[] pdfBytes = pdfOutputStream.toByteArray();
 
-//         // Step 2: Initialize AWS S3 Client
-//         S3Client s3Client = S3Client.builder()
-//                 .region(REGION)
-//                 .credentialsProvider(StaticCredentialsProvider.create(
-//                         AwsBasicCredentials.create(ACCESS_KEY, SECRET_KEY)
-//                 ))
-//                 .build();
+        // Step 2: Initialize AWS S3 Client
+        // S3Client s3Client = S3Client.builder()
+        //         .region(REGION)
+        //         .credentialsProvider(StaticCredentialsProvider.create(
+        //                 AwsBasicCredentials.create(ACCESS_KEY, SECRET_KEY)
+        //         ))
+        //         .build();
 
-//         // Step 3: Prepare the upload request with Public Read permission
-//         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-//                 .bucket(BUCKET_NAME)
-//                 .key(s3FileName)
-//                 .contentType("application/pdf")
-//                 .acl(ObjectCannedACL.PUBLIC_READ) // Makes the URL publicly accessible
-//                 .build();
+        // Step 3: Prepare the upload request with Public Read permission
+        // PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+        //         .bucket(BUCKET_NAME)
+        //         .key(s3FileName)
+        //         .contentType("application/pdf")
+        //         .acl(ObjectCannedACL.PUBLIC_READ) // Makes the URL publicly accessible
+        //         .build();
 
-//         // Execute upload from memory byte array
-//         s3Client.putObject(putObjectRequest, RequestBody.fromBytes(pdfBytes));
+        // Execute upload from memory byte array
+        // s3Client.putObject(putObjectRequest, RequestBody.fromBytes(pdfBytes));
 
-//         // Step 4: Construct and return the permanent public link
-//         return String.format("https://%s.s3.%://amazonaws.com", BUCKET_NAME, REGION.id(), s3FileName);
-//     }
+        // Step 4: Construct and return the permanent public link
+        // return String.format("https://%s.s3.%://amazonaws.com", BUCKET_NAME, "", s3FileName);
+        return  "temporary-public-link"; // Replace with actual public link after upload        
+        }
 }

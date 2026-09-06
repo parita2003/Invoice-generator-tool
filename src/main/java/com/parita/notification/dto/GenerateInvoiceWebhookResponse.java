@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class GenerateInvoiceWebhookResponse {
-
-   private Long userId;
-
-   private String templateCode;
+   public Long userId;
+   public String pdfUrl;
+   public String invoiceId;
+   public String customerId;
 }
