@@ -10,13 +10,18 @@ import com.parita.notification.entity.User;
 import com.parita.notification.repository.TemplateRepository;
 import com.parita.notification.repository.UserRepository;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.helper.W3CDom;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+
+import tools.jackson.databind.introspect.TypeResolutionContext;
 // import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 // import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 // import software.amazon.awssdk.core.sync.RequestBody;
@@ -24,7 +29,6 @@ import java.io.OutputStream;
 // import software.amazon.awssdk.services.s3.S3Client;
 // import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 // import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import java.io.ByteArrayOutputStream;
 @Service
 public class NotificationServiceImpl implements NotificationService {
 
@@ -188,4 +192,29 @@ public class NotificationServiceImpl implements NotificationService {
         // return String.format("https://%s.s3.%://amazonaws.com", BUCKET_NAME, "", s3FileName);
         return  "temporary-public-link"; // Replace with actual public link after upload        
         }
+ @Override
+   public byte[] generatePdfBytes(String htmlContent) {
+        byte[]  pdfBytes = null;
+    // Step 1: Parse HTML and enforce XML syntax using Jsoup
+    Document doc = Jsoup.parse(htmlContent);
+    doc.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
+    doc.outputSettings().prettyPrint(false);
+
+    // Step 2: Set up in-memory output stream and renderer builder
+    try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+        PdfRendererBuilder builder = new PdfRendererBuilder();
+        builder.useFastMode();
+        builder.withW3cDocument(new W3CDom().fromJsoup(doc), "/");
+        builder.toStream(os);
+        
+        // Step 3: Run the conversion
+        builder.run();
+        
+        // Step 4: Return the raw PDF byte array
+        return os.toByteArray();
+    }   catch (IOException ex) {
+            System.getLogger(NotificationServiceImpl.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
+    return pdfBytes;
+}
 }

@@ -47,7 +47,7 @@ public class NotificationController {
 public ResponseEntity<byte[]> viewPdfInBrowser() {
     HttpHeaders headers = new HttpHeaders();
     String htmlContent = "<html><body><h1>Hello World</h1><p>This PDF was generated from HTML for free!</p></body></html>";
-    byte[] pdfBytes = generatePdfBytes( htmlContent);
+    byte[] pdfBytes = notificationService.generatePdfBytes( htmlContent);
             headers.setContentType(MediaType.APPLICATION_PDF);
             // "inline" opens it in the browser tab. Use "attachment" if you want to force an automatic download.
             headers.setContentDispositionFormData("inline", "invoice.pdf"); 
