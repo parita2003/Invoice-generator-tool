@@ -1,5 +1,6 @@
 package com.parita.notification.controller;
-
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,4 +43,14 @@ public class NotificationController {
 
         return ResponseEntity.ok(response);
     }
+    @GetMapping("/view-pdf")
+public ResponseEntity<byte[]> viewPdfInBrowser() {
+    HttpHeaders headers = new HttpHeaders();
+    String htmlContent = "<html><body><h1>Hello World</h1><p>This PDF was generated from HTML for free!</p></body></html>";
+    byte[] pdfBytes = generatePdfBytes( htmlContent);
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            // "inline" opens it in the browser tab. Use "attachment" if you want to force an automatic download.
+            headers.setContentDispositionFormData("inline", "invoice.pdf"); 
+    return new ResponseEntity<>(pdfBytes, headers, org.springframework.http.HttpStatus.OK);
+}
 }
